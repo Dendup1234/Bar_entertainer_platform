@@ -18,7 +18,7 @@ const eventSchema = new Schema(
     },
     entertainerTypeNeeded: {
       type: String,
-      enum: ["singer", "musician", "comedian", "dj", "dancer", "band", "other"],
+      enum: ["singer", "comedian", "dj", "dancer", "band", "other","all"],
       required: true,
     },
     genresPreferred: [String],
@@ -49,7 +49,7 @@ const eventSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["open", "closed", "in_progress", "completed", "cancelled"],
+      enum: ["open", "in_progress", "completed", "cancelled"],
       default: "open",
     },
     selectedEntertainer: {

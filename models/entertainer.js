@@ -36,7 +36,7 @@ const entertainerSchema = new mongoose.Schema(
     },
     entertainerType: {
       type: String,
-      enum: ["singer", "musician", "comedian", "dj", "dancer", "band", "other"],
+      enum: ["singer", "comedian", "dj", "dancer", "band", "other"],
       required: true,
     },
     genres: [
@@ -45,13 +45,7 @@ const entertainerSchema = new mongoose.Schema(
         trim: true,
       },
     ],
-    languages: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-    city: {
+    location: {
       type: String,
       trim: true,
     },
