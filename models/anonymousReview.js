@@ -2,23 +2,23 @@ import mongoose, { Schema, Types } from "mongoose";
 
 const anonymousReviewSchema = new Schema(
   {
-    booking: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Booking",
+    event: {
+      type: Types.ObjectId,
+      ref: "Event",
       required: true,
     },
     bar: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "Bar",
       required: true,
     },
     entertainer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "Entertainer",
       required: true,
     },
     qrToken: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "QRReviewToken",
       required: true,
     },
@@ -42,6 +42,10 @@ const anonymousReviewSchema = new Schema(
       type: Number,
       min: 1,
       max: 5,
+    },
+    singerNeedess: {
+      type: String,
+      enum: ["Yes", "No"],
     },
     comment: {
       type: String,

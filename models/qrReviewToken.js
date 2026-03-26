@@ -2,9 +2,9 @@ import mongoose, { Schema, Types } from "mongoose";
 
 const qrReviewTokenSchema = new Schema(
   {
-    booking: {
+    event: {
       type: Types.ObjectId,
-      ref: "Booking",
+      ref: "Event",
       required: true,
     },
     bar: {
