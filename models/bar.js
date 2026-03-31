@@ -1,4 +1,4 @@
-import mongoose, { Schema, Type } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const barSchema = new Schema(
   {
@@ -31,10 +31,6 @@ const barSchema = new Schema(
       default: "",
     },
     address: {
-      type: String,
-      trim: true,
-    },
-    city: {
       type: String,
       trim: true,
     },

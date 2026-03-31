@@ -7,7 +7,7 @@ const entertainerSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    fullName: {
+    name: {
       type: String,
       trim: true,
     },
@@ -37,7 +37,6 @@ const entertainerSchema = new mongoose.Schema(
     entertainerType: {
       type: String,
       enum: ["singer", "comedian", "dj", "dancer", "band", "other"],
-      required: true,
     },
     genres: [
       {
