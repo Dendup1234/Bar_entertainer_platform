@@ -11,6 +11,13 @@ import {
   setNewPassword,
 } from "../controllers/organizer/auth.js";
 
+import { getProfile, updateProfile } from "../controllers/organizer/profile.js";
+
+import {
+  getAllEntertainer,
+  getEntertainerById,
+} from "../controllers/organizer/entertainer.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -21,5 +28,13 @@ router.post("/login", login);
 router.post("/password-reset/send-otp", sendPasswordResetOtp);
 router.post("/password-reset/verify-otp", verifyPasswordResetOtp);
 router.post("/password-reset/set-new", setNewPassword);
+
+//Profile api
+router.get("/profile", protect, getProfile);
+router.patch("/profile", protect, updateProfile);
+
+//Entertainer api
+router.get("/entertainer", protect, getAllEntertainer);
+router.get("/entertainer/:entertainerId", protect, getEntertainerById);
 
 export default router;
