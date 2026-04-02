@@ -18,6 +18,8 @@ import {
   getEntertainerById,
 } from "../controllers/organizer/entertainer.js";
 
+import { createEvent, getAllEvents } from "../controllers/organizer/event.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -36,5 +38,9 @@ router.patch("/profile", protect, updateProfile);
 //Entertainer api
 router.get("/entertainer", protect, getAllEntertainer);
 router.get("/entertainer/:entertainerId", protect, getEntertainerById);
+
+//Event api
+router.post("/event", protect, createEvent);
+router.get("/event", protect, getAllEvents);
 
 export default router;

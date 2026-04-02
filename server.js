@@ -3,6 +3,7 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import entertainerRoute from "./routes/entertainer.js";
 import organizerRoute from "./routes/organizer.js";
+import cors from "cors";
 // defining the imports
 const app = express();
 app.use(express.json());
@@ -11,6 +12,7 @@ dotenv.config();
 // env variables
 const PORT = process.env.PORT;
 
+app.use(cors());
 // Routes
 app.get("/", (req, res) => {
   res.send("Hello World from Express!");
@@ -27,3 +29,4 @@ app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
 app.use("/api/entertainer", entertainerRoute);
+PORT;

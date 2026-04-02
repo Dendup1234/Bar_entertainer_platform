@@ -16,11 +16,13 @@ const eventSchema = new Schema(
       type: String,
       trim: true,
     },
-    entertainerTypeNeeded: {
-      type: String,
-      enum: ["singer", "comedian", "dj", "dancer", "band", "other","all"],
-      required: true,
-    },
+    entertainerTypeNeeded: [
+      {
+        type: String,
+        enum: ["singer", "comedian", "dj", "dancer", "band", "other", "all"],
+        required: true,
+      },
+    ],
     genresPreferred: [String],
     eventDate: {
       type: Date,
