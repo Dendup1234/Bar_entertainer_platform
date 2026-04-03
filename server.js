@@ -25,8 +25,7 @@ app.use("/api/bar", organizerRoute);
 await connectDB();
 
 // Start the server and listen on the specified port
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
-app.use("/api/entertainer", entertainerRoute);
-PORT;
+

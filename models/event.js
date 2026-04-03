@@ -12,6 +12,10 @@ const eventSchema = new Schema(
       required: true,
       trim: true,
     },
+    bannerImageUrl: {
+      type: String,
+      default: "",
+    },
     description: {
       type: String,
       trim: true,

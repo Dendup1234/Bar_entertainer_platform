@@ -53,12 +53,7 @@ export const getAllEvents = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "Invalid token" });
     }
-    const events = await Event.find({ bar: userId }).populate([
-      {
-        path: "bar",
-        select: "businessName",
-      },
-    ]);
+    const events = await Event.find({ bar: userId });
     return res.status(200).json({ message: "Success", events: events });
   } catch (e) {
     console.log(e);
