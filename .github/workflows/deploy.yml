@@ -21,4 +21,5 @@ jobs:
             cd /root/Bar_entertainer_platform
             git pull origin master
             npm install
-            pm2 restart server.js
+            pm2 list
+            pm2 reload app
