@@ -60,3 +60,87 @@ export const getAllEvents = async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 };
+
+// Getting event by their id
+export const getEventById = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    return res.status(200).json({
+      message: "Success",
+      event: event,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: e.message });
+  }
+};
+
+//Updating the event
+export const updateEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const update = req.body;
+    const event = await Event.findByIdAndUpdate(eventId, update, {
+      new: true,
+      runValidater: true,
+    });
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    return res.status(200).json({
+      message: "event updated successful",
+      event: event,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: e.message });
+  }
+};
+
+//Deactivating the event
+export const deleteEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      { status: "cancelled" },
+      { new: true },
+    );
+    return res.status(200).json({ message: "event deactivated", event: event });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: e.message });
+  }
+};
+
+//Searching the events
+export const searchEventsByName = async (req, res) => {
+  try {
+    const userId = req.user.sub;
+    if (!userId) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const q = (req.query.q || "").trim();
+    if (!q) {
+      return res.status(400).json({ message: "q (search term) is required" });
+    }
+    // Event search
+    const event = await Event.find({
+      bar: userId,
+      title: { $regex: q, $options: "i" },
+    }).lean();
+
+    return res.status(200).json({
+      message: "Successful",
+      event: event,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: e.message });
+  }
+};

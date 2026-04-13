@@ -3,6 +3,8 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import entertainerRoute from "./routes/entertainer.js";
 import organizerRoute from "./routes/organizer.js";
+import uploadRoutes from "./routes/upload.js";
+
 import cors from "cors";
 // defining the imports
 const app = express();
@@ -21,6 +23,7 @@ app.get("/", (req, res) => {
 //Routes
 app.use("/api/entertainer", entertainerRoute);
 app.use("/api/bar", organizerRoute);
+app.use("/api/v1/uploads", uploadRoutes);
 
 await connectDB();
 
@@ -28,4 +31,3 @@ await connectDB();
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
-
