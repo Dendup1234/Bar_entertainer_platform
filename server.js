@@ -3,7 +3,6 @@ import connectDB from "./config/db.js";
 import dotenv from "dotenv";
 import entertainerRoute from "./routes/entertainer.js";
 import organizerRoute from "./routes/organizer.js";
-import uploadRoutes from "./routes/upload.js";
 
 import cors from "cors";
 // defining the imports
@@ -23,7 +22,6 @@ app.get("/", (req, res) => {
 //Routes
 app.use("/api/entertainer", entertainerRoute);
 app.use("/api/bar", organizerRoute);
-app.use("/api/v1/uploads", uploadRoutes);
 
 await connectDB();
 

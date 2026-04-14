@@ -11,7 +11,7 @@ import {
   setNewPassword,
 } from "../controllers/organizer/auth.js";
 
-import { getProfile, updateProfile,updateProfileBlob } from "../controllers/organizer/profile.js";
+import { getProfile, updateProfile } from "../controllers/organizer/profile.js";
 
 import {
   getAllEntertainer,
@@ -27,8 +27,7 @@ import {
   deleteEvent,
 } from "../controllers/organizer/event.js";
 
-import uploadBarImage from "../middleware/upload.js";
-
+import { generateSAS, confirmUpload } from "../controllers/organizer/blob.js";
 const router = express.Router();
 
 // Authentication api
@@ -43,13 +42,6 @@ router.post("/password-reset/set-new", setNewPassword);
 //Profile api
 router.get("/profile", protect, getProfile);
 router.patch("/profile", protect, updateProfile);
-router.patch(
-  "/profile/blob",
-  protect,
-  uploadBarImage.single("profileImage"),
-  updateProfileBlob,
-);
-
 //Entertainer api
 router.get("/entertainer", protect, getAllEntertainer);
 router.get("/entertainer/:entertainerId", protect, getEntertainerById);
@@ -61,5 +53,9 @@ router.get("/event/:eventId", protect, getEventById);
 router.patch("/event/:eventId", protect, updateEvent);
 router.delete("/event/:eventId", protect, deleteEvent);
 router.get("/event/search/query", protect, searchEventsByName);
+
+//Profile upload
+router.post("/uploads/sas", protect, generateSAS);
+router.post("/uploads/confirm", protect, confirmUpload);
 
 export default router;
