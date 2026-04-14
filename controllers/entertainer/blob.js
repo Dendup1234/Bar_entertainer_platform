@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 dotenv.config();
-import Bar from "../../models/bar.js";
-import Event from "../../models/event.js";
+import Entertainer from "../../models/entertainer.js";
 
 import {
   StorageSharedKeyCredential,
@@ -73,8 +72,8 @@ export const generateSAS = async (req, res) => {
 
 export const confirmUpload = async (req, res) => {
   try {
-    const { blobName, eventId, imageType } = req.body;
-    const barId = req.user.sub;
+    const { blobName, imageType } = req.body;
+    const userId = req.user.sub;
 
     if (!blobName) {
       return res
@@ -88,36 +87,20 @@ export const confirmUpload = async (req, res) => {
       return res.status(400).json({ error: "Upload not found" });
     }
 
-    if (imageType == "event") {
-      const event = await Event.findByIdAndUpdate(
-        eventId,
-        { bannerImageUrl: blobClient.url },
+    if (imageType == "entertainer") {
+      const entertainer = await Entertainer.findByIdAndUpdate(
+        userId,
+        { profileImage: blobClient.url },
         { new: true },
       );
 
-      if (!event) {
+      if (!entertainer) {
         return res.status(404).json({ error: "Event not found" });
       }
 
       return res.status(200).json({
-        message: "Event image upload confirmed",
-        data: event,
-      });
-    }
-
-    if (imageType == "bar") {
-      const bar = await Bar.findByIdAndUpdate(
-        barId,
-        { profileImage: blobClient.url },
-        { new: true },
-      );
-      if (!bar) {
-        return res.status(404).json({ error: "Bar not found" });
-      }
-
-      return res.status(200).json({
-        message: "Bar image upload confirmed",
-        data: bar,
+        message: "Profile image upload confirmed",
+        data: entertainer,
       });
     }
   } catch (err) {

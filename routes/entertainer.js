@@ -16,6 +16,8 @@ import {
   updateProfile,
 } from "../controllers/entertainer/profile.js";
 
+import { generateSAS, confirmUpload } from "../controllers/entertainer/blob.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -30,5 +32,9 @@ router.post("/password-reset/set-new", setNewPassword);
 //Profile api
 router.get("/profile", protect, getProfile);
 router.patch("/profile", protect, updateProfile);
+
+//Profile upload
+router.post("/uploads/sas", protect, generateSAS);
+router.post("/uploads/confirm", protect, confirmUpload);
 
 export default router;
