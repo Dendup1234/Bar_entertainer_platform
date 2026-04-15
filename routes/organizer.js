@@ -25,9 +25,16 @@ import {
   getEventById,
   searchEventsByName,
   deleteEvent,
+  dashboardCount,
 } from "../controllers/organizer/event.js";
 
 import { generateSAS, confirmUpload } from "../controllers/organizer/blob.js";
+
+import {
+  createBooking,
+  getBarBookings,
+} from "../controllers/organizer/booking.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -53,9 +60,14 @@ router.get("/event/:eventId", protect, getEventById);
 router.patch("/event/:eventId", protect, updateEvent);
 router.delete("/event/:eventId", protect, deleteEvent);
 router.get("/event/search/query", protect, searchEventsByName);
+router.get("/event/dashboard/count", protect, dashboardCount);
 
 //Profile upload
 router.post("/uploads/sas", protect, generateSAS);
 router.post("/uploads/confirm", protect, confirmUpload);
+
+//Booking api
+router.post("/bookings", protect, createBooking);
+router.get("/bookings", protect, getBarBookings);
 
 export default router;

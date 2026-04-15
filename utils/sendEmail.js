@@ -131,7 +131,7 @@ const buildHtmlTemplate = (content) => `
         }
       </div>
       <div class="footer">
-        <p>This is an automated message from EduAgent Support.</p>
+        <p>This is an automated message from Bar Entertainer Platform.</p>
         <p>Please do not reply to this email.</p>
       </div>
     </body>
@@ -159,44 +159,42 @@ export const sendOtpEmail = async (email, otp) => {
 };
 
 // Send Mentor Connection Email
-export const sendMenteeEmail = async (email, mentor) => {
+export const sendStatusEmail = async (email, entertainer, event, status) => {
   const htmlContent = buildHtmlTemplate({
-    title: "Connection Accepted",
-    body: `<p>Congratulations! Your connection request with mentor <strong>${mentor}</strong> has been accepted.</p>
-           <p>You can now schedule appointments and communicate with your mentor through the EduAgent platform.</p>`,
-    buttonText: "View Mentor Profile",
-    buttonUrl: `${process.env.APP_URL}/mentor/${mentor}`,
+    title: `Booking ${status}`,
+    body: `<p>Your booking was ${status} by the ${entertainer} for ${event}</p>`,
+    buttonText: "View the event dashboard",
+    buttonUrl: `${process.env.APP_URL}`,
   });
 
   await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
+    from: `"Bar-Entertainer platform" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: `Connection with ${mentor} Accepted`,
-    text: `Your connection request with mentor ${mentor} has been accepted.`,
+    subject: `Booking was ${status} by ${entertainer} for the ${event}`,
+    text: ``,
     html: htmlContent,
   });
 };
 
-// Send Appointment Email
-export const sendAppointmentEmail = async (email, mentorName, time, date) => {
+// Send Appointment Email for the event booking
+export const sendAppointmentEmail = async (email, eventName, date) => {
   const htmlContent = buildHtmlTemplate({
-    title: "Appointment Confirmed",
-    body: `<p>Your appointment has been scheduled successfully.</p>
+    title: "Booking has been sent",
+    body: `<p>You were booked in ${eventName}</p>
            <div class="info-box">
-             <p><strong>Mentor:</strong> ${mentorName}</p>
+             <p><strong>EventName:</strong> ${eventName}</p>
              <p><strong>Date:</strong> ${date}</p>
-             <p><strong>Time:</strong> ${time}</p>
            </div>
-           <p>Please join the meeting 5 minutes before the scheduled time.</p>`,
-    buttonText: "View Calendar",
-    buttonUrl: `${process.env.APP_URL}/calendar`,
+           <p>accept or reject the offer in your dashboard</p>`,
+    buttonText: "Redirect",
+    buttonUrl: `${process.env.APP_URL}`,
   });
 
   await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
+    from: `"Bar-Entertainer platform" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: `Appointment with ${mentorName}`,
-    text: `You have an appointment with ${mentorName} at ${time} on ${date}`,
+    subject: `Appointment at ${eventName}`,
+    text: `You have an appointment at ${eventName} on ${date}`,
     html: htmlContent,
   });
 };

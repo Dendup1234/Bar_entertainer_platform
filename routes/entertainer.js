@@ -1,6 +1,5 @@
 import express from "express";
 import { protect } from "../middleware/auth.middleware.js";
-
 import {
   sendOtp,
   resendOtp,
@@ -17,6 +16,11 @@ import {
 } from "../controllers/entertainer/profile.js";
 
 import { generateSAS, confirmUpload } from "../controllers/entertainer/blob.js";
+
+import {
+  getEntertainerBookings,
+  updateBookingStatus,
+} from "../controllers/entertainer/booking.js";
 
 const router = express.Router();
 
@@ -36,5 +40,9 @@ router.patch("/profile", protect, updateProfile);
 //Profile upload
 router.post("/uploads/sas", protect, generateSAS);
 router.post("/uploads/confirm", protect, confirmUpload);
+
+// Booking api
+router.get("/bookings", protect, getEntertainerBookings);
+router.patch("/bookings/:bookingId/status", protect, updateBookingStatus);
 
 export default router;
