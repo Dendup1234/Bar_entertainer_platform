@@ -161,3 +161,56 @@ export const updateBookingStatus = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// Status card for the booking schema
+export const getBookingStats = async (req, res) => {
+  try {
+    const userId = req.user.sub; // assuming bar dashboard
+
+    if (!userId) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const stats = await Booking.aggregate([
+      {
+        $match: { entertainer: new mongoose.Types.ObjectId(userId) },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: 1 },
+          pending: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "pending"] }, 1, 0],
+            },
+          },
+          accepted: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "accepted"] }, 1, 0],
+            },
+          },
+          rejected: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "rejected"] }, 1, 0],
+            },
+          },
+        },
+      },
+    ]);
+
+    const result = stats[0] || {
+      total: 0,
+      pending: 0,
+      accepted: 0,
+      rejected: 0,
+    };
+
+    return res.status(200).json({
+      message: "Booking stats fetched",
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};

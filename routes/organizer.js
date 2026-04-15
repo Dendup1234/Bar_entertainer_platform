@@ -27,6 +27,9 @@ import {
   searchEventsByName,
   deleteEvent,
   dashboardCount,
+  getBarEventApplications,
+  getBarEventApplicationsShortlisted,
+  updateApplicationStatus,
 } from "../controllers/organizer/event.js";
 
 import { generateSAS, confirmUpload } from "../controllers/organizer/blob.js";
@@ -77,4 +80,12 @@ router.get("/bookings", protect, getBarBookings);
 router.get("/bookings/stats", protect, getBookingStats);
 router.get("/bookings/search/query", protect, searchBarBookingsByEventName);
 
+// Application api
+router.get("/applications", protect, getBarEventApplications);
+router.get("/applications/shortlisted", protect, getBarEventApplicationsShortlisted);
+router.patch(
+  "/applications/:applicationId/status",
+  protect,
+  updateApplicationStatus,
+);
 export default router;

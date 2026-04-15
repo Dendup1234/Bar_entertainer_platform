@@ -20,9 +20,14 @@ import { generateSAS, confirmUpload } from "../controllers/entertainer/blob.js";
 import {
   getEntertainerBookings,
   updateBookingStatus,
+  getBookingStats,
 } from "../controllers/entertainer/booking.js";
 
-import { getAllEvents } from "../controllers/entertainer/event.js";
+import {
+  getAllEvents,
+  getEventById,
+  applyToEvent,
+} from "../controllers/entertainer/event.js";
 
 const router = express.Router();
 
@@ -46,9 +51,10 @@ router.post("/uploads/confirm", protect, confirmUpload);
 // Booking api
 router.get("/bookings", protect, getEntertainerBookings);
 router.patch("/bookings/:bookingId/status", protect, updateBookingStatus);
+router.get("/bookings/stats", protect, getBookingStats);
 
 // Event api
 router.get("/events", protect, getAllEvents);
-
-
+router.get("/events/:eventId/profile", protect, getEventById);
+router.post("/events/:eventId/apply", protect, applyToEvent);
 export default router;

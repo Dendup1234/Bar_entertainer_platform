@@ -199,178 +199,24 @@ export const sendAppointmentEmail = async (email, eventName, date) => {
   });
 };
 
-// Send Account Email
-export const sendAccountEmail = async (email, message) => {
-  const { subject, title, body, password } = message;
-
+// Send Appointment Email for the event booking
+export const sendApplicationEmail = async (email, eventName, date) => {
   const htmlContent = buildHtmlTemplate({
-    title: title || "Account Information",
-    body: `<p>${body || "Your account has been created successfully."}</p>
-           ${
-             password
-               ? `<div class="info-box">
-                <p><strong>Temporary Password:</strong> ${password}</p>
-                <p><em>Please change your password after first login.</em></p>
-              </div>`
-               : ""
-           }`,
-    buttonText: "Login to Account",
-    buttonUrl: `${process.env.APP_URL}/login`,
-  });
-
-  await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: subject || "Account Information",
-    text: `${title || "Account Information"}\n\n${body || ""}${
-      password ? `\n\nTemporary Password: ${password}` : ""
-    }`,
-    html: htmlContent,
-  });
-};
-
-// Send Event Success Email
-export const sendEventSuccessEmail = async (email, message) => {
-  const { subject, title, startTime, timeZone, body, link, password } = message;
-
-  const htmlContent = buildHtmlTemplate({
-    title: title || "Event Registration Confirmed",
-    body: `<p>${body || "Your event registration was successful."}</p>
+    title: "Your application was accepted",
+    body: `<p>Your application on ${eventName} was accepted</p>
            <div class="info-box">
-             <p><strong>Start Time:</strong> ${startTime}</p>
-             <p><strong>Time Zone:</strong> ${timeZone}</p>
-             ${link ? `<p><strong>Meeting Link:</strong> <a href="${link}">Join Event</a></p>` : ""}
-             ${password ? `<p><strong>Meeting Password:</strong> ${password}</p>` : ""}
-           </div>
-           <p>We recommend joining the meeting 10 minutes before the scheduled start time.</p>`,
-    buttonText: link ? "Join Event" : "View Event Details",
-    buttonUrl: link || `${process.env.APP_URL}/events`,
+             <p><strong>EventName:</strong> ${eventName}</p>
+             <p><strong>Date:</strong> ${date}</p>
+           </div>`,
+    buttonText: "Redirect",
+    buttonUrl: `${process.env.APP_URL}`,
   });
 
   await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
+    from: `"Bar-Entertainer platform" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: subject || "Event Registration Confirmed",
-    text: `${title || "Event Registration Confirmed"}\n\n${body || ""}\n\nStart Time: ${startTime}\nTime Zone: ${timeZone}${
-      link ? `\nMeeting Link: ${link}` : ""
-    }${password ? `\nPassword: ${password}` : ""}`,
-    html: htmlContent,
-  });
-};
-
-//Send seated success email
-// Send Seated Event Success Email (Bulk Seats)
-export const sendSeatedEventSuccessEmail = async (email, message) => {
-  const {
-    subject,
-    title,
-    startTime,
-    timeZone,
-    body,
-    seats, // "A1, A2, B3"
-    seatIds, // ["65ff..1", "65ff..2"]
-    ticketType, // optional or "Multiple"
-    totalPrice, // 4500
-  } = message;
-
-  const htmlContent = buildHtmlTemplate({
-    title: title || "Event Registration Confirmed",
-    body: `
-      <p>${body || "Your event registration was successful."}</p>
-
-      <div class="info-box">
-        <p><strong>Start Time:</strong> ${startTime}</p>
-        <p><strong>Time Zone:</strong> ${timeZone}</p>
-
-        ${seats ? `<p><strong>Seats:</strong> ${seats}</p>` : ""}
-
-        ${
-          Array.isArray(seatIds) && seatIds.length > 0
-            ? `<p><strong>Seat IDs:</strong></p>
-               <ul>
-                 ${seatIds.map((id) => `<li>${id}</li>`).join("")}
-               </ul>`
-            : ""
-        }
-
-        ${
-          ticketType ? `<p><strong>Ticket Type:</strong> ${ticketType}</p>` : ""
-        }
-
-        ${
-          totalPrice !== undefined
-            ? `<p><strong>Total Price:</strong> ${totalPrice} BTN</p>`
-            : ""
-        }
-      </div>
-
-      <p>Please arrive at the venue 15 minutes before the event starts.</p>
-    `,
-    buttonText: "View Event Details",
-    buttonUrl: `${process.env.APP_URL}/events`,
-  });
-
-  await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: subject || "Event Registration Confirmed",
-    text: `
-${title || "Event Registration Confirmed"}
-
-${body || ""}
-
-Start Time: ${startTime}
-Time Zone: ${timeZone}
-${seats ? `Seats: ${seats}\n` : ""}
-${
-  Array.isArray(seatIds) && seatIds.length > 0
-    ? `Seat IDs:\n${seatIds.join("\n")}\n`
-    : ""
-}
-${ticketType ? `Ticket Type: ${ticketType}\n` : ""}
-${totalPrice !== undefined ? `Total Price: ${totalPrice} BTN\n` : ""}
-    `,
-    html: htmlContent,
-  });
-};
-
-// Assign student with agent email
-// Send email to both Student and Agent email
-export const sendAgentAssignmentEmail = async ({
-  studentEmail,
-  agentEmail,
-  agentName,
-  studentName,
-}) => {
-  const htmlContent = buildHtmlTemplate({
-    title: "Agent Assigned Successfully",
-    body: `
-      <p>The agent <strong>${agentName}</strong> has been successfully assigned.</p>
-      <p>
-        <strong>Student:</strong> ${studentName}<br/>
-        <strong>Agent:</strong> ${agentName}
-      </p>
-      <p>You can now begin communication and schedule sessions through the EduAgent platform.</p>
-    `,
-  });
-
-  const subject = `Agent ${agentName} Assigned Successfully`;
-
-  const textContent = `
-Agent Assigned Successfully
-
-Student: ${studentName}
-Agent: ${agentName}
-
-`;
-
-  const recipients = [studentEmail, agentEmail].filter(Boolean);
-
-  await sendEmail({
-    from: `"EduAgent Support" <${process.env.EMAIL_USER}>`,
-    to: recipients, // Send to both student and agency
-    subject,
-    text: textContent,
+    subject: ` application on ${eventName} was accepted`,
+    text: `You have an event at ${eventName} on ${date}`,
     html: htmlContent,
   });
 };
