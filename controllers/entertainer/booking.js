@@ -46,7 +46,7 @@ export const updateBookingStatus = async (req, res) => {
         message: "Invalid booking status",
       });
     }
-
+    console.log(bookingId);
     const booking = await Booking.findOne({
       _id: bookingId,
       entertainer: entertainerId,
@@ -94,6 +94,11 @@ export const updateBookingStatus = async (req, res) => {
 
       // Assign this singer to the event
       event.selectedEntertainer = entertainerId;
+      await event.save({ session });
+
+      // Set event status to in_progress
+      event.status = "in_progress";
+
       await event.save({ session });
 
       // Accept this booking

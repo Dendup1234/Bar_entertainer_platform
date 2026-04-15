@@ -22,6 +22,8 @@ import {
   updateBookingStatus,
 } from "../controllers/entertainer/booking.js";
 
+import { getAllEvents } from "../controllers/entertainer/event.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -44,5 +46,9 @@ router.post("/uploads/confirm", protect, confirmUpload);
 // Booking api
 router.get("/bookings", protect, getEntertainerBookings);
 router.patch("/bookings/:bookingId/status", protect, updateBookingStatus);
+
+// Event api
+router.get("/events", protect, getAllEvents);
+
 
 export default router;

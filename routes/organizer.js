@@ -16,6 +16,7 @@ import { getProfile, updateProfile } from "../controllers/organizer/profile.js";
 import {
   getAllEntertainer,
   getEntertainerById,
+  searchEntertainer,
 } from "../controllers/organizer/entertainer.js";
 
 import {
@@ -33,6 +34,8 @@ import { generateSAS, confirmUpload } from "../controllers/organizer/blob.js";
 import {
   createBooking,
   getBarBookings,
+  getBookingStats,
+  searchBarBookingsByEventName,
 } from "../controllers/organizer/booking.js";
 
 const router = express.Router();
@@ -49,9 +52,11 @@ router.post("/password-reset/set-new", setNewPassword);
 //Profile api
 router.get("/profile", protect, getProfile);
 router.patch("/profile", protect, updateProfile);
+
 //Entertainer api
 router.get("/entertainer", protect, getAllEntertainer);
 router.get("/entertainer/:entertainerId", protect, getEntertainerById);
+router.get("/entertainer/search/query/", protect, searchEntertainer);
 
 //Event api
 router.post("/event", protect, createEvent);
@@ -69,5 +74,7 @@ router.post("/uploads/confirm", protect, confirmUpload);
 //Booking api
 router.post("/bookings", protect, createBooking);
 router.get("/bookings", protect, getBarBookings);
+router.get("/bookings/stats", protect, getBookingStats);
+router.get("/bookings/search/query", protect, searchBarBookingsByEventName);
 
 export default router;
