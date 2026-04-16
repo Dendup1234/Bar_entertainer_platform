@@ -43,10 +43,6 @@ const anonymousReviewSchema = new Schema(
       min: 1,
       max: 5,
     },
-    singerNeedess: {
-      type: String,
-      enum: ["Yes", "No"],
-    },
     comment: {
       type: String,
       trim: true,

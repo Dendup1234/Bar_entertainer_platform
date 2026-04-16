@@ -34,9 +34,8 @@ const qrReviewTokenSchema = new Schema(
       type: Boolean,
       default: true,
     },
-    qrImageUrl: {
+    reviewUrl: {
       type: String,
-      default: "",
     },
   },
   { timestamps: true },

@@ -41,6 +41,13 @@ import {
   searchBarBookingsByEventName,
 } from "../controllers/organizer/booking.js";
 
+import {
+  generateReviewToken,
+  regenerateReviewToken,
+  getReviewPageByToken,
+  submitAnonymousReview,
+} from "../controllers/organizer/review.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -82,10 +89,25 @@ router.get("/bookings/search/query", protect, searchBarBookingsByEventName);
 
 // Application api
 router.get("/applications", protect, getBarEventApplications);
-router.get("/applications/shortlisted", protect, getBarEventApplicationsShortlisted);
+router.get(
+  "/applications/shortlisted",
+  protect,
+  getBarEventApplicationsShortlisted,
+);
 router.patch(
   "/applications/:applicationId/status",
   protect,
   updateApplicationStatus,
 );
+
+// Review api
+router.post("/reviews/:eventId/generate-token", protect, generateReviewToken);
+router.post(
+  "/reviews/:eventId/regenerate-token",
+  protect,
+  regenerateReviewToken,
+);
+router.get("/reviews/:token", getReviewPageByToken);
+router.post("/reviews/:token/submit", submitAnonymousReview);
+
 export default router;
