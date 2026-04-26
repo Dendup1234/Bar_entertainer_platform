@@ -31,7 +31,7 @@ const anonymousReviewSchema = new Schema(
     performanceRating: {
       type: Number,
       min: 1,
-      max: 5, singerNeedess,
+      max: 5, 
     },
     professionalismRating: {
       type: Number,
