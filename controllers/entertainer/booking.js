@@ -59,7 +59,15 @@ export const updateBookingStatus = async (req, res) => {
         message: "Booking not found",
       });
     }
+    // the booking status should be pending to updat the status
+    if (booking.status !== "pending") {
+      await session.abortTransaction();
+      session.endSession();
 
+      return res.status(400).json({
+        message: `Booking is already ${booking.status}. You cannot change it again.`,
+      });
+    }
     // If accepting, enforce one singer per event
     if (status === "accepted") {
       if (!booking.event) {
@@ -123,6 +131,8 @@ export const updateBookingStatus = async (req, res) => {
       booking.status = "rejected";
       await booking.save({ session });
     }
+
+
 
     await session.commitTransaction();
     session.endSession();
