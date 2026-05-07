@@ -46,6 +46,8 @@ import {
   regenerateReviewToken,
   getReviewPageByToken,
   submitAnonymousReview,
+  getEventEntertainerReviewTable,
+  getEventProfileById
 } from "../controllers/organizer/review.js";
 
 const router = express.Router();
@@ -109,5 +111,7 @@ router.post(
 );
 router.get("/reviews/:token", getReviewPageByToken);
 router.post("/reviews/:token/submit", submitAnonymousReview);
+router.get("/reviews/events/stats", protect, getEventEntertainerReviewTable);
+router.get("/reviews/:eventId/profile", protect, getEventProfileById)
 
 export default router;
