@@ -14,6 +14,8 @@ dotenv.config();
 const PORT = process.env.PORT;
 
 app.use(cors());
+app.use("/api-docs", express.static("docs"));
+
 // Routes
 app.get("/", (req, res) => {
   res.send("Hello World from Express!");

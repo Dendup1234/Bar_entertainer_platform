@@ -1,0 +1,924 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Bar Entertainer Platform API",
+    "version": "1.0.0",
+    "description": "OpenAPI documentation for the Express API that powers organizer/bar and entertainer workflows."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    { "name": "Health" },
+    { "name": "Entertainer Auth" },
+    { "name": "Entertainer Profile" },
+    { "name": "Entertainer Uploads" },
+    { "name": "Entertainer Bookings" },
+    { "name": "Entertainer Events" },
+    { "name": "Organizer Auth" },
+    { "name": "Organizer Profile" },
+    { "name": "Organizer Entertainers" },
+    { "name": "Organizer Events" },
+    { "name": "Organizer Uploads" },
+    { "name": "Organizer Bookings" },
+    { "name": "Organizer Applications" },
+    { "name": "Reviews" }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "API is running",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "example": "Hello World from Express!" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/entertainer/send-otp": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Start entertainer signup and send OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/EntertainerSignup" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" }, "500": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/resend-otp": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Resend entertainer OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/EmailOnly" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/verify-otp": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Verify entertainer signup OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/VerifyOtp" },
+        "responses": { "200": { "$ref": "#/components/responses/AuthSuccess" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/login": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Log in as an entertainer",
+        "requestBody": { "$ref": "#/components/requestBodies/Login" },
+        "responses": { "200": { "$ref": "#/components/responses/AuthSuccess" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/password-reset/send-otp": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Send entertainer password reset OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/EmailOnly" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/password-reset/verify-otp": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Verify entertainer password reset OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/VerifyOtp" },
+        "responses": { "200": { "$ref": "#/components/responses/ResetToken" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/password-reset/set-new": {
+      "post": {
+        "tags": ["Entertainer Auth"],
+        "summary": "Set a new entertainer password",
+        "requestBody": { "$ref": "#/components/requestBodies/SetNewPassword" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/profile": {
+      "get": {
+        "tags": ["Entertainer Profile"],
+        "summary": "Get entertainer profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/Entertainer" }, "401": { "$ref": "#/components/responses/Error" } }
+      },
+      "patch": {
+        "tags": ["Entertainer Profile"],
+        "summary": "Update entertainer profile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/EntertainerProfileUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/Entertainer" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/uploads/sas": {
+      "post": {
+        "tags": ["Entertainer Uploads"],
+        "summary": "Generate Azure Blob SAS upload URL",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/UploadSas" },
+        "responses": { "200": { "$ref": "#/components/responses/UploadSas" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/uploads/confirm": {
+      "post": {
+        "tags": ["Entertainer Uploads"],
+        "summary": "Confirm entertainer profile upload",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EntertainerConfirmUploadRequest" }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/bookings": {
+      "get": {
+        "tags": ["Entertainer Bookings"],
+        "summary": "List entertainer booking requests",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/BookingList" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/bookings/{bookingId}/status": {
+      "patch": {
+        "tags": ["Entertainer Bookings"],
+        "summary": "Accept or reject a booking",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/BookingId" }],
+        "requestBody": { "$ref": "#/components/requestBodies/BookingStatus" },
+        "responses": { "200": { "$ref": "#/components/responses/Booking" }, "400": { "$ref": "#/components/responses/Error" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/bookings/stats": {
+      "get": {
+        "tags": ["Entertainer Bookings"],
+        "summary": "Get entertainer booking stats",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/BookingStats" } }
+      }
+    },
+    "/api/entertainer/events": {
+      "get": {
+        "tags": ["Entertainer Events"],
+        "summary": "List open public events",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/EventList" } }
+      }
+    },
+    "/api/entertainer/events/{eventId}/profile": {
+      "get": {
+        "tags": ["Entertainer Events"],
+        "summary": "Get event details for entertainer",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "200": { "$ref": "#/components/responses/EventList" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/events/{eventId}/apply": {
+      "post": {
+        "tags": ["Entertainer Events"],
+        "summary": "Apply to an event",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "201": { "$ref": "#/components/responses/Application" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/send-otp": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Start organizer signup and send OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/OrganizerSignup" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/resend-otp": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Resend organizer OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/EmailOnly" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/verify-otp": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Verify organizer signup OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/VerifyOtp" },
+        "responses": { "200": { "$ref": "#/components/responses/AuthSuccess" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/login": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Log in as an organizer/bar",
+        "requestBody": { "$ref": "#/components/requestBodies/Login" },
+        "responses": { "200": { "$ref": "#/components/responses/AuthSuccess" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/password-reset/send-otp": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Send organizer password reset OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/EmailOnly" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/password-reset/verify-otp": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Verify organizer password reset OTP",
+        "requestBody": { "$ref": "#/components/requestBodies/VerifyOtp" },
+        "responses": { "200": { "$ref": "#/components/responses/ResetToken" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/password-reset/set-new": {
+      "post": {
+        "tags": ["Organizer Auth"],
+        "summary": "Set a new organizer password",
+        "requestBody": { "$ref": "#/components/requestBodies/SetNewPassword" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/profile": {
+      "get": {
+        "tags": ["Organizer Profile"],
+        "summary": "Get organizer profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/Bar" }, "401": { "$ref": "#/components/responses/Error" } }
+      },
+      "patch": {
+        "tags": ["Organizer Profile"],
+        "summary": "Update organizer profile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/BarProfileUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/Bar" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/entertainer": {
+      "get": {
+        "tags": ["Organizer Entertainers"],
+        "summary": "List entertainers",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/EntertainerList" } }
+      }
+    },
+    "/api/bar/entertainer/{entertainerId}": {
+      "get": {
+        "tags": ["Organizer Entertainers"],
+        "summary": "Get entertainer by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EntertainerId" }],
+        "responses": { "200": { "$ref": "#/components/responses/Entertainer" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/entertainer/search/query/": {
+      "get": {
+        "tags": ["Organizer Entertainers"],
+        "summary": "Search entertainers",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/SearchQuery" }],
+        "responses": { "200": { "$ref": "#/components/responses/EntertainerList" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/event": {
+      "post": {
+        "tags": ["Organizer Events"],
+        "summary": "Create an event",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/EventCreate" },
+        "responses": { "201": { "$ref": "#/components/responses/Event" }, "401": { "$ref": "#/components/responses/Error" } }
+      },
+      "get": {
+        "tags": ["Organizer Events"],
+        "summary": "List organizer events",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/EventList" } }
+      }
+    },
+    "/api/bar/event/{eventId}": {
+      "get": {
+        "tags": ["Organizer Events"],
+        "summary": "Get organizer event by ID",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "200": { "$ref": "#/components/responses/EventList" }, "404": { "$ref": "#/components/responses/Error" } }
+      },
+      "patch": {
+        "tags": ["Organizer Events"],
+        "summary": "Update an event",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "requestBody": { "$ref": "#/components/requestBodies/EventUpdate" },
+        "responses": { "200": { "$ref": "#/components/responses/Event" }, "404": { "$ref": "#/components/responses/Error" } }
+      },
+      "delete": {
+        "tags": ["Organizer Events"],
+        "summary": "Cancel an event",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "200": { "$ref": "#/components/responses/Event" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/event/search/query": {
+      "get": {
+        "tags": ["Organizer Events"],
+        "summary": "Search organizer events by name",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/SearchQuery" }],
+        "responses": { "200": { "$ref": "#/components/responses/EventList" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/event/dashboard/count": {
+      "get": {
+        "tags": ["Organizer Events"],
+        "summary": "Get public/private event counts",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/DashboardCount" } }
+      }
+    },
+    "/api/bar/uploads/sas": {
+      "post": {
+        "tags": ["Organizer Uploads"],
+        "summary": "Generate Azure Blob SAS upload URL",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/UploadSas" },
+        "responses": { "200": { "$ref": "#/components/responses/UploadSas" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/uploads/confirm": {
+      "post": {
+        "tags": ["Organizer Uploads"],
+        "summary": "Confirm bar profile or event image upload",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/OrganizerConfirmUpload" },
+        "responses": { "200": { "$ref": "#/components/responses/Message" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/bookings": {
+      "post": {
+        "tags": ["Organizer Bookings"],
+        "summary": "Create a booking request",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "$ref": "#/components/requestBodies/BookingCreate" },
+        "responses": { "201": { "$ref": "#/components/responses/Booking" }, "400": { "$ref": "#/components/responses/Error" } }
+      },
+      "get": {
+        "tags": ["Organizer Bookings"],
+        "summary": "List organizer bookings",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/BookingList" } }
+      }
+    },
+    "/api/bar/bookings/stats": {
+      "get": {
+        "tags": ["Organizer Bookings"],
+        "summary": "Get organizer booking stats",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/BookingStats" } }
+      }
+    },
+    "/api/bar/bookings/search/query": {
+      "get": {
+        "tags": ["Organizer Bookings"],
+        "summary": "Search organizer bookings by event name",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/SearchQuery" }],
+        "responses": { "200": { "$ref": "#/components/responses/BookingList" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/applications": {
+      "get": {
+        "tags": ["Organizer Applications"],
+        "summary": "List applications for organizer events",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/ApplicationStatusQuery" },
+          { "$ref": "#/components/parameters/EventNameQuery" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/ApplicationList" } }
+      }
+    },
+    "/api/bar/applications/shortlisted": {
+      "get": {
+        "tags": ["Organizer Applications"],
+        "summary": "List shortlisted applications",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventNameQuery" }],
+        "responses": { "200": { "$ref": "#/components/responses/ApplicationList" } }
+      }
+    },
+    "/api/bar/applications/{applicationId}/status": {
+      "patch": {
+        "tags": ["Organizer Applications"],
+        "summary": "Update application status",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/ApplicationId" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ApplicationStatus" },
+        "responses": { "200": { "$ref": "#/components/responses/Application" }, "400": { "$ref": "#/components/responses/Error" }, "403": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/reviews/{eventId}/generate-token": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Generate public review token for an event",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "201": { "$ref": "#/components/responses/ReviewToken" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/reviews/{eventId}/regenerate-token": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Regenerate public review token for an event",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/EventId" }],
+        "responses": { "201": { "$ref": "#/components/responses/ReviewToken" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/reviews/{token}": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Validate a public review token",
+        "parameters": [{ "$ref": "#/components/parameters/ReviewTokenPath" }],
+        "responses": { "200": { "$ref": "#/components/responses/ReviewPage" }, "400": { "$ref": "#/components/responses/Error" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/reviews/{token}/submit": {
+      "post": {
+        "tags": ["Reviews"],
+        "summary": "Submit an anonymous event review",
+        "parameters": [{ "$ref": "#/components/parameters/ReviewTokenPath" }],
+        "requestBody": { "$ref": "#/components/requestBodies/ReviewSubmit" },
+        "responses": { "201": { "$ref": "#/components/responses/Review" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/bar/reviews/events/stats": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get organizer event review stats table",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/ReviewStatsTable" } }
+      }
+    },
+    "/api/bar/reviews/{eventId}/profile": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get public-facing event review profile",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" },
+          { "$ref": "#/components/parameters/CursorCreatedAt" },
+          { "$ref": "#/components/parameters/CursorId" },
+          { "$ref": "#/components/parameters/Limit" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/EventReviewProfile" }, "400": { "$ref": "#/components/responses/Error" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "EventId": { "name": "eventId", "in": "path", "required": true, "schema": { "type": "string" }, "example": "66b9f6b0d4f2d8a1f4e3c111" },
+      "BookingId": { "name": "bookingId", "in": "path", "required": true, "schema": { "type": "string" } },
+      "ApplicationId": { "name": "applicationId", "in": "path", "required": true, "schema": { "type": "string" } },
+      "EntertainerId": { "name": "entertainerId", "in": "path", "required": true, "schema": { "type": "string" } },
+      "ReviewTokenPath": { "name": "token", "in": "path", "required": true, "schema": { "type": "string" } },
+      "SearchQuery": { "name": "q", "in": "query", "required": true, "schema": { "type": "string" }, "example": "jazz" },
+      "EventNameQuery": { "name": "eventName", "in": "query", "required": false, "schema": { "type": "string" } },
+      "ApplicationStatusQuery": { "name": "status", "in": "query", "required": false, "schema": { "$ref": "#/components/schemas/ApplicationStatus" } },
+      "CursorCreatedAt": { "name": "cursorCreatedAt", "in": "query", "required": false, "schema": { "type": "string", "format": "date-time" } },
+      "CursorId": { "name": "cursorId", "in": "query", "required": false, "schema": { "type": "string" } },
+      "Limit": { "name": "limit", "in": "query", "required": false, "schema": { "type": "integer", "default": 5, "minimum": 1 } }
+    },
+    "requestBodies": {
+      "EmailOnly": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EmailOnly" } } } },
+      "Login": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } } } },
+      "VerifyOtp": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VerifyOtpRequest" } } } },
+      "SetNewPassword": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SetNewPasswordRequest" } } } },
+      "EntertainerSignup": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EntertainerSignupRequest" } } } },
+      "OrganizerSignup": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OrganizerSignupRequest" } } } },
+      "EntertainerProfileUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EntertainerProfileUpdate" } } } },
+      "BarProfileUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BarProfileUpdate" } } } },
+      "UploadSas": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UploadSasRequest" } } } },
+      "OrganizerConfirmUpload": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/OrganizerConfirmUploadRequest" } } } },
+      "EventCreate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventCreateRequest" } } } },
+      "EventUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventUpdateRequest" } } } },
+      "BookingCreate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookingCreateRequest" } } } },
+      "BookingStatus": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookingStatusUpdateRequest" } } } },
+      "ApplicationStatus": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApplicationStatusUpdateRequest" } } } },
+      "ReviewSubmit": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReviewSubmitRequest" } } } }
+    },
+    "responses": {
+      "Message": { "description": "Message response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MessageResponse" } } } },
+      "Error": { "description": "Error response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
+      "AuthSuccess": { "description": "Authentication succeeded", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthSuccessResponse" } } } },
+      "ResetToken": { "description": "Password reset token response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ResetTokenResponse" } } } },
+      "Entertainer": { "description": "Entertainer response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "data": { "$ref": "#/components/schemas/Entertainer" }, "entertainer": { "$ref": "#/components/schemas/Entertainer" } } } } } },
+      "EntertainerList": { "description": "Entertainer list", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "entertainers": { "type": "array", "items": { "$ref": "#/components/schemas/Entertainer" } }, "data": { "type": "array", "items": { "$ref": "#/components/schemas/Entertainer" } } } } } } },
+      "Bar": { "description": "Bar response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "data": { "$ref": "#/components/schemas/Bar" }, "bar": { "$ref": "#/components/schemas/Bar" } } } } } },
+      "UploadSas": { "description": "SAS URL generated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UploadSasResponse" } } } },
+      "Event": { "description": "Event response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "event": { "$ref": "#/components/schemas/Event" }, "data": { "$ref": "#/components/schemas/Event" } } } } } },
+      "EventList": { "description": "Event list response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "events": { "type": "array", "items": { "$ref": "#/components/schemas/Event" } } } } } } },
+      "Booking": { "description": "Booking response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "booking": { "$ref": "#/components/schemas/Booking" } } } } } },
+      "BookingList": { "description": "Booking list response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "bookings": { "type": "array", "items": { "$ref": "#/components/schemas/Booking" } } } } } } },
+      "BookingStats": { "description": "Booking stats", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BookingStatsResponse" } } } },
+      "Application": { "description": "Application response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "application": { "$ref": "#/components/schemas/EventApplication" } } } } } },
+      "ApplicationList": { "description": "Application list response", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "count": { "type": "integer" }, "applications": { "type": "array", "items": { "$ref": "#/components/schemas/EventApplication" } } } } } } },
+      "DashboardCount": { "description": "Event dashboard counts", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DashboardCountResponse" } } } },
+      "ReviewToken": { "description": "Review token response", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReviewTokenResponse" } } } },
+      "ReviewPage": { "description": "Public review page data", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReviewPageResponse" } } } },
+      "Review": { "description": "Review submitted", "content": { "application/json": { "schema": { "type": "object", "properties": { "message": { "type": "string" }, "review": { "$ref": "#/components/schemas/AnonymousReview" } } } } } },
+      "ReviewStatsTable": { "description": "Review stats table", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReviewStatsTableResponse" } } } },
+      "EventReviewProfile": { "description": "Event review profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/EventReviewProfileResponse" } } } }
+    },
+    "schemas": {
+      "MessageResponse": {
+        "type": "object",
+        "properties": { "message": { "type": "string" } }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": { "message": { "type": "string" }, "error": { "type": "string" } }
+      },
+      "EmailOnly": {
+        "type": "object",
+        "required": ["email"],
+        "properties": { "email": { "type": "string", "format": "email", "example": "user@example.com" } }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+      "VerifyOtpRequest": {
+        "type": "object",
+        "required": ["email", "otp"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "otp": { "type": "string", "example": "123456" }
+        }
+      },
+      "SetNewPasswordRequest": {
+        "type": "object",
+        "required": ["resetToken", "newPassword"],
+        "properties": {
+          "resetToken": { "type": "string" },
+          "newPassword": { "type": "string", "format": "password" }
+        }
+      },
+      "EntertainerSignupRequest": {
+        "type": "object",
+        "required": ["stageName", "name", "phone", "email", "password"],
+        "properties": {
+          "stageName": { "type": "string", "example": "DJ Nova" },
+          "name": { "type": "string", "example": "Alex Kim" },
+          "phone": { "type": "string", "example": "+97517123456" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+      "OrganizerSignupRequest": {
+        "type": "object",
+        "required": ["businessName", "name", "phone", "email", "password"],
+        "properties": {
+          "businessName": { "type": "string", "example": "The Blue Bar" },
+          "name": { "type": "string", "example": "Owner Name" },
+          "phone": { "type": "string", "example": "+97517123456" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+      "AuthSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "token": { "type": "string" },
+          "data": { "type": "object", "additionalProperties": true },
+          "user": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "ResetTokenResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "resetToken": { "type": "string" }
+        }
+      },
+      "Bar": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "businessName": { "type": "string" },
+          "ownerName": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "profileImage": { "type": "string" },
+          "address": { "type": "string" },
+          "description": { "type": "string" },
+          "venueType": { "type": "string", "enum": ["bar", "pub", "club", "hotel", "restaurant", "lounge", "other"] },
+          "isVerified": { "type": "boolean" },
+          "isActive": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Entertainer": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "stageName": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string" },
+          "profileImage": { "type": "string" },
+          "experiences": { "type": "string" },
+          "entertainerType": { "$ref": "#/components/schemas/EntertainerType" },
+          "genres": { "type": "array", "items": { "type": "string" } },
+          "location": { "type": "string" },
+          "performanceFeeMin": { "type": "number" },
+          "performanceFeeMax": { "type": "number" },
+          "socialLinks": { "$ref": "#/components/schemas/SocialLinks" },
+          "availableAt": { "type": "string" },
+          "availabilityStatus": { "type": "string", "enum": ["available", "busy", "inactive"] },
+          "averageRating": { "type": "number" },
+          "totalReviews": { "type": "integer" },
+          "totalBookings": { "type": "integer" },
+          "isVerified": { "type": "boolean" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "EntertainerType": {
+        "type": "string",
+        "enum": ["singer", "comedian", "dj", "dancer", "band", "other"]
+      },
+      "SocialLinks": {
+        "type": "object",
+        "properties": {
+          "instagram": { "type": "string" },
+          "youtube": { "type": "string" },
+          "tiktok": { "type": "string" },
+          "facebook": { "type": "string" }
+        }
+      },
+      "BarProfileUpdate": {
+        "allOf": [{ "$ref": "#/components/schemas/Bar" }],
+        "description": "Partial bar profile update. Do not include password."
+      },
+      "EntertainerProfileUpdate": {
+        "allOf": [{ "$ref": "#/components/schemas/Entertainer" }],
+        "description": "Partial entertainer profile update. Do not include password."
+      },
+      "UploadSasRequest": {
+        "type": "object",
+        "required": ["mimeType", "size"],
+        "properties": {
+          "mimeType": { "type": "string", "enum": ["image/png", "image/jpeg", "application/pdf"] },
+          "size": { "type": "integer", "description": "File size in bytes. Maximum 52428800." }
+        }
+      },
+      "UploadSasResponse": {
+        "type": "object",
+        "properties": {
+          "sasUrl": { "type": "string", "format": "uri" },
+          "blobName": { "type": "string" }
+        }
+      },
+      "EntertainerConfirmUploadRequest": {
+        "type": "object",
+        "required": ["blobName", "imageType"],
+        "properties": {
+          "blobName": { "type": "string" },
+          "imageType": { "type": "string", "enum": ["entertainer"] }
+        }
+      },
+      "OrganizerConfirmUploadRequest": {
+        "type": "object",
+        "required": ["blobName", "imageType"],
+        "properties": {
+          "blobName": { "type": "string" },
+          "eventId": { "type": "string", "description": "Required when imageType is event." },
+          "imageType": { "type": "string", "enum": ["event", "bar"] }
+        }
+      },
+      "EventCreateRequest": {
+        "type": "object",
+        "required": ["title", "entertainerTypeNeeded", "eventDate"],
+        "properties": {
+          "title": { "type": "string", "example": "Friday Night Live" },
+          "description": { "type": "string" },
+          "entertainerTypeNeeded": { "type": "array", "items": { "type": "string", "enum": ["singer", "comedian", "dj", "dancer", "band", "other", "all"] } },
+          "genresPreferred": { "type": "array", "items": { "type": "string" } },
+          "eventDate": { "type": "string", "format": "date-time" },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time" },
+          "venueAddress": { "type": "string" },
+          "city": { "type": "string" },
+          "offeredAmount": { "type": "number" },
+          "applicationDeadline": { "type": "string", "format": "date-time" },
+          "isPublic": { "type": "boolean", "default": true }
+        }
+      },
+      "EventUpdateRequest": {
+        "allOf": [{ "$ref": "#/components/schemas/EventCreateRequest" }],
+        "description": "Partial event update."
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "bar": { "type": "string" },
+          "title": { "type": "string" },
+          "bannerImageUrl": { "type": "string" },
+          "description": { "type": "string" },
+          "entertainerTypeNeeded": { "type": "array", "items": { "type": "string" } },
+          "genresPreferred": { "type": "array", "items": { "type": "string" } },
+          "eventDate": { "type": "string", "format": "date-time" },
+          "startTime": { "type": "string", "format": "date-time" },
+          "endTime": { "type": "string", "format": "date-time" },
+          "venueAddress": { "type": "string" },
+          "city": { "type": "string" },
+          "offeredAmount": { "type": "number" },
+          "applicationDeadline": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["open", "in_progress", "completed", "cancelled"] },
+          "selectedEntertainer": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Entertainer" }] },
+          "isPublic": { "type": "boolean" },
+          "reviewCount": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BookingCreateRequest": {
+        "type": "object",
+        "required": ["entertainer", "eventId"],
+        "properties": {
+          "entertainer": { "type": "string" },
+          "eventId": { "type": "string" }
+        }
+      },
+      "BookingStatusUpdateRequest": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "type": "string", "enum": ["accepted", "rejected"] }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "event": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Event" }] },
+          "bar": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Bar" }] },
+          "entertainer": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Entertainer" }] },
+          "agreedAmount": { "type": "number" },
+          "status": { "type": "string", "enum": ["pending", "accepted", "cancelled", "rejected"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BookingStatsResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "integer" },
+              "pending": { "type": "integer" },
+              "accepted": { "type": "integer" },
+              "rejected": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "ApplicationStatus": {
+        "type": "string",
+        "enum": ["pending", "shortlisted", "accepted", "rejected"]
+      },
+      "ApplicationStatusUpdateRequest": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "type": "string", "enum": ["shortlisted", "accepted", "rejected"] }
+        }
+      },
+      "EventApplication": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "event": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Event" }] },
+          "entertainer": { "oneOf": [{ "type": "string" }, { "$ref": "#/components/schemas/Entertainer" }] },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "DashboardCountResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "publicCount": { "type": "integer" },
+          "privateCount": { "type": "integer" },
+          "totalCount": { "type": "integer" }
+        }
+      },
+      "ReviewTokenResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "qrTokenId": { "type": "string" },
+          "token": { "type": "string" },
+          "reviewUrl": { "type": "string", "format": "uri" },
+          "validFrom": { "type": "string", "format": "date-time" },
+          "validUntil": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ReviewPageResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "event": { "$ref": "#/components/schemas/Event" },
+          "entertainer": { "$ref": "#/components/schemas/Entertainer" }
+        }
+      },
+      "ReviewSubmitRequest": {
+        "type": "object",
+        "required": ["performanceRating", "professionalismRating", "crowdEngagementRating", "deviceId"],
+        "properties": {
+          "performanceRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "professionalismRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "crowdEngagementRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "comment": { "type": "string", "maxLength": 1000 },
+          "deviceId": { "type": "string" }
+        }
+      },
+      "AnonymousReview": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "event": { "type": "string" },
+          "bar": { "type": "string" },
+          "entertainer": { "type": "string" },
+          "qrToken": { "type": "string" },
+          "overallRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "performanceRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "professionalismRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "crowdEngagementRating": { "type": "number", "minimum": 1, "maximum": 5 },
+          "comment": { "type": "string" },
+          "reviewerLabel": { "type": "string" },
+          "moderationStatus": { "type": "string", "enum": ["visible", "hidden", "flagged"] }
+        }
+      },
+      "ReviewStatsTableResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "entertainerId": { "type": "string" },
+                "entertainer": { "type": "string" },
+                "type": { "type": "string" },
+                "eventName": { "type": "string" },
+                "eventType": { "type": "string", "enum": ["Public", "Private"] },
+                "noOfReviews": { "type": "integer" },
+                "avgRating": { "type": "number" }
+              }
+            }
+          }
+        }
+      },
+      "EventReviewProfileResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "message": { "type": "string" },
+          "event": { "$ref": "#/components/schemas/Event" },
+          "stats": { "type": "object", "additionalProperties": true },
+          "comments": { "type": "array", "items": { "$ref": "#/components/schemas/AnonymousReview" } },
+          "pagination": { "type": "object", "additionalProperties": true }
+        }
+      }
+    }
+  }
+}
