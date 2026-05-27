@@ -49,6 +49,7 @@ export const getAllEvents = async (req, res) => {
         $project: {
           title: 1,
           description: 1,
+          bannerImageUrl: 1,
           entertainerTypeNeeded: 1,
           genresPreferred: 1,
           eventDate: 1,
@@ -128,6 +129,7 @@ export const getEventById = async (req, res) => {
         $project: {
           title: 1,
           description: 1,
+          bannerImageUrl: 1,
           entertainerTypeNeeded: 1,
           genresPreferred: 1,
           eventDate: 1,

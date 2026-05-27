@@ -21,7 +21,6 @@ models/                   # Mongoose schemas
 middleware/               # Auth middleware
 config/                   # MongoDB and Azure Blob setup
 utils/                    # JWT, email, cursor, and update helpers
-docs/                     # Swagger UI and OpenAPI specification
 ```
 
 ## Getting Started
@@ -63,28 +62,6 @@ npm start
 ```
 
 The API listens on `http://localhost:<PORT>` and exposes a health check at `/`.
-
-## API Documentation
-
-Swagger UI is served by the backend at:
-
-```text
-http://localhost:<PORT>/api-docs
-```
-
-Using the example `.env` above, open:
-
-```text
-http://localhost:5000/api-docs
-```
-
-The raw OpenAPI document is available at:
-
-```text
-http://localhost:<PORT>/api-docs/openapi.json
-```
-
-The documentation files live in `docs/index.html` and `docs/openapi.json`. When routes, request bodies, or response shapes change, update `docs/openapi.json` in the same pull request.
 
 ## API Overview
 
@@ -131,3 +108,7 @@ No automated test suite is currently configured. When adding tests, prefer API-l
 - Use a strong `JWT_SECRET` outside local development.
 - Keep Azure keys, connection strings, and email credentials in environment variables.
 - Validate authenticated user ownership before modifying bookings, events, profiles, or uploads.
+
+￼
+￼
+￼
