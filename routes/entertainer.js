@@ -30,6 +30,11 @@ import {
   applyToEvent,
 } from "../controllers/entertainer/event.js";
 
+import {
+  getEntertainerReviewProfileById,
+  getEntertainerReviewTable,
+} from "../controllers/entertainer/review.js";
+
 const router = express.Router();
 
 // Authentication api
@@ -61,4 +66,8 @@ router.post("/events/:eventId/apply", protect, applyToEvent);
 
 // Application api
 router.get("/applications", protect, getMyApplications);
+
+// Review api
+router.get("/reviews/events/stats", protect, getEntertainerReviewTable);
+router.get("/reviews/:eventId/profile", protect, getEntertainerReviewProfileById);
 export default router;

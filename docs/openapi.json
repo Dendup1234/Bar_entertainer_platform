@@ -201,6 +201,28 @@
         "responses": { "200": { "$ref": "#/components/responses/ApplicationList" } }
       }
     },
+    "/api/entertainer/reviews/events/stats": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get event review stats table for the authenticated entertainer",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "$ref": "#/components/responses/ReviewStatsTable" }, "401": { "$ref": "#/components/responses/Error" } }
+      }
+    },
+    "/api/entertainer/reviews/{eventId}/profile": {
+      "get": {
+        "tags": ["Reviews"],
+        "summary": "Get review profile for an event attended by the authenticated entertainer",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" },
+          { "$ref": "#/components/parameters/CursorCreatedAt" },
+          { "$ref": "#/components/parameters/CursorId" },
+          { "$ref": "#/components/parameters/Limit" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/EventReviewProfile" }, "400": { "$ref": "#/components/responses/Error" }, "404": { "$ref": "#/components/responses/Error" } }
+      }
+    },
     "/api/bar/send-otp": {
       "post": {
         "tags": ["Organizer Auth"],

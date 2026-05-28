@@ -3,7 +3,7 @@ import AnonymousReview from "../models/anonymousReview.js";
 
 export const loadCommentsCursor = async (
     eventId,
-    { cursorCreatedAt = null, cursorId = null, limit = 5 } = {},
+    { cursorCreatedAt = null, cursorId = null, limit = 5, entertainerId = null } = {},
 ) => {
     limit = Number(limit);
 
@@ -20,6 +20,14 @@ export const loadCommentsCursor = async (
         moderationStatus: "visible",
         comment: { $exists: true, $ne: "" },
     };
+
+    if (entertainerId) {
+        if (!mongoose.Types.ObjectId.isValid(entertainerId)) {
+            throw new Error("Invalid entertainerId");
+        }
+
+        query.entertainer = new mongoose.Types.ObjectId(entertainerId);
+    }
 
     // Load older comments
     if (cursorCreatedAt && cursorId) {
