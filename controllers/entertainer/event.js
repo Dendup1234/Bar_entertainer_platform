@@ -158,6 +158,41 @@ export const getEventById = async (req, res) => {
   }
 };
 
+// getting applications submitted by the entertainer
+export const getMyApplications = async (req, res) => {
+  try {
+    const entertainerId = req.user.sub;
+    const { status } = req.query;
+
+    if (!entertainerId) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const query = { entertainer: entertainerId };
+
+    if (status) {
+      query.status = status;
+    }
+
+    const applications = await EventApplication.find(query)
+      .populate(
+        "event",
+        "title eventDate startTime endTime isPublic offeredAmount venueAddress city status",
+      )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.status(200).json({
+      message: "Applications fetched successfully",
+      count: applications.length,
+      applications,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 //logic when the entertainer apply for an event
 export const applyToEvent = async (req, res) => {
   try {

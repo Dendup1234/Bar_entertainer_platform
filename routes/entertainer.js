@@ -26,6 +26,7 @@ import {
 import {
   getAllEvents,
   getEventById,
+  getMyApplications,
   applyToEvent,
 } from "../controllers/entertainer/event.js";
 
@@ -57,4 +58,7 @@ router.get("/bookings/stats", protect, getBookingStats);
 router.get("/events", protect, getAllEvents);
 router.get("/events/:eventId/profile", protect, getEventById);
 router.post("/events/:eventId/apply", protect, applyToEvent);
+
+// Application api
+router.get("/applications", protect, getMyApplications);
 export default router;

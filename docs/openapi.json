@@ -192,6 +192,15 @@
         "responses": { "201": { "$ref": "#/components/responses/Application" }, "400": { "$ref": "#/components/responses/Error" } }
       }
     },
+    "/api/entertainer/applications": {
+      "get": {
+        "tags": ["Entertainer Events"],
+        "summary": "List applications submitted by the entertainer",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/ApplicationStatusQuery" }],
+        "responses": { "200": { "$ref": "#/components/responses/ApplicationList" } }
+      }
+    },
     "/api/bar/send-otp": {
       "post": {
         "tags": ["Organizer Auth"],
